@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İstasyon Detayı</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    
+    <style>
+
+        :root {
+            --page-bg: #0f1418;
+            --panel-bg: #151d24;
+            --panel-bg-strong: #1e272e;
+            --panel-glass: rgba(30, 39, 46, 0.78);
+            --line: #334155;
+            --line-soft: rgba(148, 163, 184, 0.18);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-soft: #cbd5e1;
+            --accent: #f97316;
+            --accent-strong: #e65100;
+            --accent-deep: #bf360c;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #eab308;
+            --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.42);
+            --shadow-card: 0 18px 45px rgba(0, 0, 0, 0.32);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 28px;
+            background:
+                radial-gradient(circle at 18% 8%, rgba(249, 115, 22, 0.12), transparent 26%),
+                linear-gradient(135deg, #0f1418 0%, #111a21 42%, #0b1014 100%);
+            color: var(--text);
+            font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+            letter-spacing: 0;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            max-width: 1180px;
+            margin: 0 auto 28px;
+            padding: 20px 22px;
+            background: linear-gradient(145deg, rgba(30, 39, 46, 0.88), rgba(15, 20, 24, 0.72));
+            border: 1px solid var(--line-soft);
+            border-radius: 8px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .detail-header h2 {
+            margin: 0;
+            color: var(--text);
+            font-size: clamp(24px, 3vw, 34px);
+            font-weight: 800;
+            line-height: 1.12;
+        }
+
+        .detail-header p {
+            margin: 8px 0 0;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        #cihazSeriNoSpan {
+            color: var(--text-soft);
+            font-family: Consolas, 'Courier New', monospace;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+            gap: 24px;
+            max-width: 1180px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        .tanks-wrapper {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+            gap: 22px;
+            align-items: stretch;
+        }
+
+        .tank-container,
+        .report-section {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(160deg, rgba(30, 39, 46, 0.96), rgba(17, 24, 31, 0.96));
+            border: 1px solid var(--line-soft);
+            border-radius: 8px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .tank-container::before,
+        .report-section::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.07), transparent 32%);
+            pointer-events: none;
+        }
+
+        .tank-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 470px;
+            padding: 24px 20px 22px;
+        }
+
+        .tank-title {
+            position: relative;
+            width: 100%;
+            margin-bottom: 18px;
+            color: var(--text);
+            font-size: 17px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .tank-title::after {
+            content: "";
+            display: block;
+            width: 46px;
+            height: 3px;
+            margin: 10px auto 0;
+            background: var(--accent);
+            border-radius: 999px;
+            box-shadow: 0 0 18px rgba(249, 115, 22, 0.45);
+        }
+
+        .cylinder {
+            position: relative;
+            width: 126px;
+            height: 282px;
+            overflow: hidden;
+            isolation: isolate;
+            background:
+                radial-gradient(ellipse at 50% 6%, rgba(226, 232, 240, 0.2) 0%, rgba(51, 65, 85, 0.55) 46%, rgba(15, 23, 42, 0.94) 72%),
+                linear-gradient(90deg, #111827 0%, #334155 17%, #1e293b 46%, #0f172a 100%);
+            border: 1px solid rgba(148, 163, 184, 0.48);
+            border-radius: 63px / 18px;
+            box-shadow:
+                inset -24px 0 34px rgba(0, 0, 0, 0.48),
+                inset 14px 0 22px rgba(255, 255, 255, 0.08),
+                0 20px 42px rgba(0, 0, 0, 0.48);
+        }
+
+        .cylinder::before,
+        .cylinder::after {
+            content: "";
+            position: absolute;
+            left: 8px;
+            right: 8px;
+            z-index: 4;
+            height: 34px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .cylinder::before {
+            top: -3px;
+            background: radial-gradient(ellipse at center, rgba(203, 213, 225, 0.28), rgba(51, 65, 85, 0.22) 55%, rgba(15, 20, 24, 0.76) 76%);
+            border: 1px solid rgba(203, 213, 225, 0.25);
+            box-shadow: inset 0 8px 14px rgba(255, 255, 255, 0.08);
+        }
+
+        .cylinder::after {
+            bottom: -11px;
+            background: rgba(2, 6, 23, 0.34);
+            box-shadow: 0 -8px 18px rgba(0, 0, 0, 0.42);
+        }
+
+        .cylinder-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            min-height: 8px;
+            border-radius: 0 0 63px 63px / 0 0 18px 18px;
+            transition: height 1s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow:
+                inset -22px 0 28px rgba(0, 0, 0, 0.3),
+                inset 16px 0 26px rgba(255, 255, 255, 0.14),
+                0 -6px 22px rgba(255, 255, 255, 0.08);
+        }
+
+        .cylinder-fill::before {
+            content: "";
+            position: absolute;
+            top: -13px;
+            left: 0;
+            width: 100%;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 7px 15px rgba(255, 255, 255, 0.2), inset 0 -8px 12px rgba(0, 0, 0, 0.16);
+        }
+
+        .cylinder-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            border-radius: 63px / 18px;
+            pointer-events: none;
+            background:
+                linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.42) 17%, rgba(255, 255, 255, 0.05) 32%, transparent 52%),
+                repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 28px);
+            mix-blend-mode: screen;
+        }
+
+        .tank-info {
+            margin-top: 22px;
+            text-align: center;
+        }
+
+        .tank-info h3 {
+            margin: 0;
+            color: var(--text);
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .tank-info p {
+            margin: 8px 0 0;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .tank-last-fill {
+            margin-top: 14px;
+            padding: 10px 12px;
+            color: #fed7aa;
+            background: rgba(249, 115, 22, 0.09);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .report-section { padding: 26px; }
+
+        .report-section h3 {
+            position: relative;
+            margin: 0 0 18px;
+            padding-bottom: 13px;
+            color: var(--text);
+            border-bottom: 1px solid var(--line-soft);
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .quick-reports {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 26px;
+        }
+
+        .btn-report,
+        .btn-download,
+        .btn-save,
+        .btn-edit {
+            border: 0;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
+        }
+
+        .btn-report {
+            min-height: 44px;
+            padding: 12px;
+            color: var(--text-soft);
+            background: rgba(51, 65, 85, 0.62);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .btn-report:hover {
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            border-color: rgba(249, 115, 22, 0.8);
+            box-shadow: 0 12px 26px rgba(249, 115, 22, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .custom-report { margin-top: 4px; }
+
+        .date-picker-wrapper { margin-bottom: 16px; }
+
+        .date-picker-wrapper label,
+        .modal-body label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-soft);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .date-input,
+        .modal-body input {
+            width: 100%;
+            min-height: 46px;
+            padding: 12px 14px;
+            color: var(--text);
+            background: rgba(15, 20, 24, 0.86);
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            border-radius: 8px;
+            outline: none;
+            font: inherit;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .date-input:hover,
+        .modal-body input:hover { border-color: rgba(249, 115, 22, 0.45); }
+
+        .date-input:focus,
+        .modal-body input:focus {
+            background: rgba(15, 20, 24, 0.98) !important;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.16);
+        }
+
+        .btn-download,
+        .btn-save {
+            width: 100%;
+            min-height: 48px;
+            padding: 13px 16px;
+            color: white;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 800;
+            box-shadow: 0 14px 30px rgba(249, 115, 22, 0.25);
+        }
+
+        .btn-download:hover,
+        .btn-save:hover {
+            background: linear-gradient(135deg, var(--accent-strong), var(--accent-deep));
+            transform: translateY(-2px);
+            box-shadow: 0 18px 34px rgba(249, 115, 22, 0.32);
+        }
+
+        .btn-edit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 42px;
+            padding: 10px 14px;
+            color: var(--text-soft);
+            background: rgba(30, 39, 46, 0.84);
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .btn-edit:hover {
+            color: white;
+            background: rgba(51, 65, 85, 0.92);
+            border-color: rgba(249, 115, 22, 0.62);
+            box-shadow: 0 14px 26px rgba(0, 0, 0, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 22px;
+            background: rgba(8, 12, 16, 0.72);
+            backdrop-filter: blur(12px) saturate(130%);
+        }
+
+        .modal-content {
+            width: min(100%, 420px);
+            overflow: hidden;
+            background: linear-gradient(155deg, rgba(30, 39, 46, 0.88), rgba(15, 20, 24, 0.84));
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            animation: modalFadeIn 0.24s ease;
+        }
+
+        .report-modal-card { width: min(100%, 860px); }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-14px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--line-soft);
+            background: rgba(15, 20, 24, 0.24);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--text);
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .close-btn {
+            display: inline-grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            color: var(--text-muted);
+            background: rgba(51, 65, 85, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 8px;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+
+        .close-btn:hover {
+            color: white;
+            background: rgba(239, 68, 68, 0.86);
+            border-color: rgba(239, 68, 68, 0.86);
+        }
+
+        .modal-body { padding: 22px; }
+
+        .modal-body .input-group { margin-bottom: 16px; }
+
+        .modal-field-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .modal-body input:-webkit-autofill,
+        .modal-body input:-webkit-autofill:hover,
+        .modal-body input:-webkit-autofill:focus,
+        .modal-body input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #0f1418 inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .report-table-shell {
+            max-height: 380px;
+            overflow: auto;
+            border: 1px solid var(--line-soft);
+            border-radius: 8px;
+            background: rgba(15, 20, 24, 0.42);
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+        }
+
+        .report-table th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            padding: 13px 14px;
+            color: #fff;
+            background: linear-gradient(180deg, #334155, #263442);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+            text-align: left;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .report-table td {
+            padding: 13px 14px;
+            color: var(--text-soft);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        .report-table tbody tr { transition: background 0.18s ease, transform 0.18s ease; }
+
+        .report-table tbody tr:hover { background: rgba(249, 115, 22, 0.1); }
+
+        .report-table tbody tr:last-child td { border-bottom: 0; }
+
+        .report-table .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 8px;
+            color: #dcfce7;
+            background: rgba(34, 197, 94, 0.18);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .flatpickr-calendar {
+            background: #151d24;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange,
+        .flatpickr-day.selected:hover,
+        .flatpickr-day.startRange:hover,
+        .flatpickr-day.endRange:hover {
+            background: var(--accent-strong);
+            border-color: var(--accent-strong);
+        }
+
+        .flatpickr-day.inRange {
+            background: rgba(249, 115, 22, 0.18);
+            border-color: rgba(249, 115, 22, 0.12);
+            box-shadow: -5px 0 0 rgba(249, 115, 22, 0.18), 5px 0 0 rgba(249, 115, 22, 0.18);
+        }
+
+        #reportLoading {
+            text-align: center;
+            padding: 22px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        @media (max-width: 920px) {
+            body { padding: 18px; }
+            .detail-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 620px) {
+            .detail-header { align-items: flex-start; flex-direction: column; }
+            .tanks-wrapper { grid-template-columns: 1fr; }
+            .quick-reports { grid-template-columns: 1fr; }
+            .modal-field-grid { grid-template-columns: 1fr; }
+            .tank-container { min-height: auto; }
+            .cylinder { height: 250px; }
+        }
+
+    </style>
+</head>
+
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal-content settings-modal-card">
+            <div class="modal-header">
+                <h3>Cihaz Ayarları</h3>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>İstasyon Adı / Etiketi</label>
+                    <input type="text" id="editDeviceName" placeholder="Örn: Fabrika Ana İstasyon">
+                </div>
+                
+                <div class="modal-field-grid">
+                    <div class="input-group">
+                        <label>Depo 1 Hacmi (L)</label>
+                        <input type="number" id="editTank1Capacity" placeholder="Örn: 5000">
+                    </div>
+                    <div class="input-group">
+                        <label>Depo 2 Hacmi (L)</label>
+                        <input type="number" id="editTank2Capacity" placeholder="Örn: 5000">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Ortak Kritik Uyarı Seviyesi (%)</label>
+                    <input type="number" id="editCriticalLevel" placeholder="Örn: 20">
+                </div>
+                <button class="btn-save" onclick="saveSettings()">Değişiklikleri Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+<body>
+
+    <div class="detail-header">
+        <div>
+            <h2 id="pageTitle">İstasyon Detayı Yükleniyor...</h2>
+            <p>Cihaz kimliği: <span id="cihazSeriNoSpan">---</span></p>
+        </div>
+        <button class="btn-edit" onclick="openModal()">⚙️ Cihaz Ayarları</button>
+    </div>
+
+    <div class="detail-grid">
+        <div class="tanks-wrapper" id="tanksContainer">
+            <div style="color: #94a3b8; padding: 40px;">Tank verileri yükleniyor...</div>
+        </div>
+
+        <div class="report-section">
+            <h3>Hızlı Raporlar</h3>
+            <div class="quick-reports">
+                <button class="btn-report" onclick="downloadReport('gunluk')">Günlük</button>
+                <button class="btn-report" onclick="downloadReport('haftalik')">Haftalık</button>
+                <button class="btn-report" onclick="downloadReport('aylik')">Aylık</button>
+            </div>
+
+            <div class="custom-report">
+                <h3>Özel Tarih Aralığı Raporu</h3>
+                <div class="date-picker-wrapper">
+                    <label>Başlangıç ve Bitiş Tarihini Seçin:</label>
+                    <input type="text" id="dateRangePicker" class="date-input" placeholder="Tarih aralığı seçin...">
+                </div>
+                <button class="btn-download" onclick="downloadCustomReport()">Seçili Raporu İndir</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal-content report-modal-card">
+            <div class="modal-header">
+                <h3 id="reportModalTitle">Rapor Önizleme</h3>
+                <span class="close-btn" onclick="closeReportModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="reportLoading">Veriler AWS'den çekiliyor, lütfen bekleyin...</div>
+                
+                <div class="report-table-shell">
+                    <table class="report-table" id="reportTable" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th>Depo Adı</th>
+                                <th>Tarih</th>
+                                <th>Günlük Tüketim (%)</th>
+                                <th>Dolum Sayısı</th>
+                                <th>İşlem Detayı</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody">
+                            </tbody>
+                    </table>
+                </div>
+                <button class="btn-save" id="btnRealDownload" style="margin-top: 20px; display:none;">Excel (CSV) Olarak İndir</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
+    
+    <script>
+        
+// =========================================================
+    // 1. GLOBAL DEĞİŞKENLER VE API ADRESLERİ
+    // =========================================================
+    const API_GATEWAY_URL = "https://3hv82jpo9j.execute-api.eu-north-1.amazonaws.com/prod/cihazlar";
+    const RAPOR_API_URL = "https://3hv82jpo9j.execute-api.eu-north-1.amazonaws.com/prod/raporlar";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const cihazId = urlParams.get('cihaz') || "Bilinmeyen Cihaz";
+
+    document.getElementById('cihazSeriNoSpan').innerText = cihazId;
+
+    let depo1Data = null;
+    let depo2Data = null;
+
+    // =========================================================
+    // 2. CİHAZ VE TANK VERİLERİNİ YÜKLEME (ANA EKRAN)
+    // =========================================================
+    async function loadDeviceData() {
+        const idToken = localStorage.getItem('idToken');
+        const username = localStorage.getItem('username');
+
+        if (!idToken || !username) {
+            alert("Oturum bulunamadı, lütfen tekrar giriş yapın.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_GATEWAY_URL}?kullanici=${username}`, {
+                method: 'GET',
+                headers: { 'Authorization': idToken, 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) throw new Error("AWS'den veri çekilemedi");
+            const data = await response.json();
+
+            const deviceTanks = data.filter(d => d.CihazSeriNo === cihazId);
+            depo1Data = deviceTanks.find(t => t.DepoId === 'depo1') || null;
+            depo2Data = deviceTanks.find(t => t.DepoId === 'depo2') || null;
+
+            if (depo1Data && depo1Data.IstasyonAdi) {
+                document.getElementById('pageTitle').innerText = depo1Data.IstasyonAdi;
+            } else {
+                document.getElementById('pageTitle').innerText = `İstasyon: ${cihazId}`;
+            }
+
+            renderRealTanks(deviceTanks);
+
+        } catch (err) {
+            console.error("Veri Yükleme Hatası:", err);
+            document.getElementById('tanksContainer').innerHTML = `<div style="color:#ef4444;">Gerçek veriler yüklenemedi. Hatayı konsoldan kontrol edin.</div>`;
+        }
+    }
+
+    function renderRealTanks(tanks) {
+        const container = document.getElementById('tanksContainer');
+        container.innerHTML = ""; 
+
+        if (tanks.length === 0) {
+            container.innerHTML = "<div style='color: #94a3b8;'>Bu cihaza ait depo verisi bulunamadı.</div>";
+            return;
+        }
+
+        tanks.forEach(tank => {
+            const level = parseFloat(tank.SonDolulukOrani || 0);
+            const tankName = tank.DepoId === 'depo1' ? 'Depo 1' : 'Depo 2';
+            
+            let sonGuncelleme = "Bilinmiyor";
+            if (tank.SonGuncelleme) {
+                const dateObj = new Date(tank.SonGuncelleme);
+                sonGuncelleme = dateObj.toLocaleString('tr-TR');
+            }
+
+            const kritikLimit = tank.KritikSeviye ? parseFloat(tank.KritikSeviye) : 20;
+
+            let bgGradient = "linear-gradient(to right, #22c55e, #16a34a)"; 
+            if (level <= kritikLimit) {
+                bgGradient = "linear-gradient(to right, #ef4444, #b91c1c)"; 
+            } else if (level <= kritikLimit + 20) {
+                bgGradient = "linear-gradient(to right, #eab308, #a16207)"; 
+            }
+
+            container.innerHTML += `
+                <div class="tank-container">
+                    <div class="tank-title">${tankName}</div>
+                    <div class="cylinder">
+                        <div class="cylinder-fill" style="height: 0%; background: ${bgGradient};" data-target-height="${level}%"></div>
+                        <div class="cylinder-overlay"></div>
+                    </div>
+                    <div class="tank-info">
+                        <h3>%${level}</h3>
+                        <p>Mevcut Doluluk</p>
+                        <div class="tank-last-fill">Son Veri:<br>${sonGuncelleme}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        setTimeout(() => {
+            document.querySelectorAll('.cylinder-fill').forEach(fill => {
+                fill.style.height = fill.getAttribute('data-target-height');
+            });
+        }, 100);
+    }
+
+    // =========================================================
+    // 3. CİHAZ AYARLARI MODALI (POP-UP)
+    // =========================================================
+    function openModal() {
+        const modal = document.getElementById('settingsModal');
+        document.getElementById('editDeviceName').value = (depo1Data && depo1Data.IstasyonAdi) ? depo1Data.IstasyonAdi : `İstasyon: ${cihazId}`;
+        document.getElementById('editTank1Capacity').value = (depo1Data && depo1Data.DepoHacmi) ? depo1Data.DepoHacmi : "5000";
+        document.getElementById('editTank2Capacity').value = (depo2Data && depo2Data.DepoHacmi) ? depo2Data.DepoHacmi : "5000";
+        document.getElementById('editCriticalLevel').value = (depo1Data && depo1Data.KritikSeviye) ? depo1Data.KritikSeviye : "20";
+        modal.style.display = "flex"; 
+    }
+
+    function closeModal() {
+        document.getElementById('settingsModal').style.display = "none"; 
+    }
+
+    async function saveSettings() {
+        const newName = document.getElementById('editDeviceName').value;
+        const tank1Cap = document.getElementById('editTank1Capacity').value;
+        const tank2Cap = document.getElementById('editTank2Capacity').value;
+        const newCritical = document.getElementById('editCriticalLevel').value;
+        const idToken = localStorage.getItem('idToken'); 
+
+        const updateData = {
+            cihazId: cihazId, 
+            istasyonAdi: newName,
+            depo1Hacim: tank1Cap,
+            depo2Hacim: tank2Cap,
+            kritikSeviye: newCritical
+        };
+
+        try {
+            const saveBtn = document.querySelector('#settingsModal .btn-save');
+            saveBtn.innerText = "Kaydediliyor...";
+            saveBtn.disabled = true;
+
+            const response = await fetch(API_GATEWAY_URL, {
+                method: 'POST',
+                headers: { 'Authorization': idToken, 'Content-Type': 'application/json' },
+                body: JSON.stringify(updateData) 
+            });
+
+            if (!response.ok) throw new Error(`Sunucu Hatası: ${response.status}`);
+
+            alert(`${newName} ayarları başarıyla kaydedildi!`);
+            closeModal();
+            location.reload(); 
+
+        } catch (err) {
+            console.error("Hata:", err);
+            alert("Kaydetme işlemi başarısız oldu. Detay: " + err.message);
+        }
+    }
+
+    // Her iki modalı da dışarı tıklayınca kapatma
+    window.onclick = function(event) {
+        const settingsModal = document.getElementById('settingsModal');
+        const reportModal = document.getElementById('reportModal');
+        if (event.target == settingsModal) settingsModal.style.display = "none";
+        if (event.target == reportModal) reportModal.style.display = "none";
+    }
+
+    // =========================================================
+    // 4. RAPORLAMA VE TABLO GÖSTERİMİ (YENİ SİSTEM)
+    // =========================================================
+    function closeReportModal() {
+        document.getElementById('reportModal').style.display = "none";
+    }
+
+    // Genel Tablo Doldurma Fonksiyonu (Tekrarı önlemek için)
+    function renderReportTable(filteredData, baslik) {
+        const tbody = document.getElementById('reportTableBody');
+        tbody.innerHTML = "";
+
+        if (filteredData.length === 0) {
+            document.getElementById('reportLoading').innerText = "Bu tarih aralığında veritabanında log bulunamadı.";
+            return;
+        }
+
+        filteredData.forEach(row => {
+            const [depoId, tarih] = row["DepoId#Tarih"].split("#");
+            const tuketim = row.GunlukTuketimYuzde || 0;
+            const dolumSayisi = row.DolumSayisi || 0;
+            
+            let islemDetayi = `<span style="color:#94a3b8;">Normal</span>`;
+            if (dolumSayisi > 0) {
+                islemDetayi = `<span class="badge">${dolumSayisi} Kez İkmal Yapıldı</span>`;
+            }
+
+            tbody.innerHTML += `
+                <tr>
+                    <td style="font-weight:bold; color:white;">${depoId.toUpperCase()}</td>
+                    <td>${tarih}</td>
+                    <td style="color:#ef4444;">-%${tuketim}</td>
+                    <td>${dolumSayisi}</td>
+                    <td>${islemDetayi}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('reportLoading').style.display = "none";
+        document.getElementById('reportTable').style.display = "table";
+        
+        const downloadBtn = document.getElementById('btnRealDownload');
+        downloadBtn.style.display = "block";
+        downloadBtn.onclick = () => exportToCSV(filteredData, `NoktaGAZ_${cihazId}_${baslik}_Rapor`);
+    }
+
+    // Hızlı Rapor Butonları (Günlük, Haftalık, Aylık)
+    async function downloadReport(type) {
+        const idToken = localStorage.getItem('idToken');
+        if (!idToken) { alert("Lütfen giriş yapın."); return; }
+
+        document.getElementById('reportModal').style.display = "flex";
+        document.getElementById('reportLoading').style.display = "block";
+        document.getElementById('reportLoading').innerText = "Veriler AWS'den çekiliyor, lütfen bekleyin...";
+        document.getElementById('reportTable').style.display = "none";
+        document.getElementById('btnRealDownload').style.display = "none";
+
+        let baslik = type === 'gunluk' ? "Günlük" : type === 'haftalik' ? "Haftalık" : "Aylık";
+        document.getElementById('reportModalTitle').innerText = `${baslik} Rapor Önizleme`;
+
+        try {
+            const response = await fetch(`${RAPOR_API_URL}?cihaz_id=${cihazId}`, {
+                method: 'GET',
+                headers: { 'Authorization': idToken, 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) throw new Error("AWS Rapor API'sine bağlanılamadı.");
+            const allData = await response.json();
+
+            const now = new Date();
+            let limitDays = type === 'gunluk' ? 2 : type === 'haftalik' ? 7 : 30;
+            const limitDate = new Date(now.getTime() - (limitDays * 24 * 60 * 60 * 1000));
+
+            const filteredData = allData.filter(row => {
+                const tarihStr = row['DepoId#Tarih'].split('#')[1];
+                const rowDate = new Date(tarihStr);
+                return rowDate >= limitDate;
+            });
+
+            filteredData.sort((a, b) => {
+                const dateA = new Date(a['DepoId#Tarih'].split('#')[1]);
+                const dateB = new Date(b['DepoId#Tarih'].split('#')[1]);
+                return dateB - dateA;
+            });
+
+            renderReportTable(filteredData, baslik);
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById('reportLoading').innerHTML = `<span style="color:#ef4444;">Hata: Raporlar çekilemedi!</span>`;
+        }
+    }
+
+    // Özel Tarih Raporu (Bunu da Pop-Up tablosuna bağladım!)
+// =========================================================
+    // ÖZEL TARİH RAPORU (TÜRKÇE TAKVİM UYUMLU)
+    // =========================================================
+    async function downloadCustomReport() {
+        const tarihler = document.getElementById("dateRangePicker").value;
+        if (!tarihler) {
+            alert("Lütfen önce bir tarih aralığı seçin!");
+            return;
+        }
+
+        const idToken = localStorage.getItem('idToken');
+        if (!idToken) { alert("Lütfen giriş yapın."); return; }
+
+        document.getElementById('reportModal').style.display = "flex";
+        document.getElementById('reportLoading').style.display = "block";
+        document.getElementById('reportLoading').innerText = "Özel tarihler AWS'den çekiliyor...";
+        document.getElementById('reportTable').style.display = "none";
+        document.getElementById('btnRealDownload').style.display = "none";
+        document.getElementById('reportModalTitle').innerText = `Özel Tarih Raporu (${tarihler})`;
+
+        try {
+            const response = await fetch(`${RAPOR_API_URL}?cihaz_id=${cihazId}`, {
+                method: 'GET',
+                headers: { 'Authorization': idToken, 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) throw new Error("AWS Rapor API'sine bağlanılamadı.");
+            const allData = await response.json();
+
+            // ÇÖZÜM: Takvim TR olduğu için "to" yerine " - " kullanıyor.
+            // İkisini de destekleyen akıllı ayırıcı:
+            let dateArray = tarihler.split(" - ");
+            if (dateArray.length === 1) {
+                dateArray = tarihler.split(" to "); // İngilizce kalırsa diye yedek plan
+            }
+            
+            const startDateStr = dateArray[0].trim();
+            const endDateStr = (dateArray[1] ? dateArray[1] : dateArray[0]).trim();
+
+            // SAAT DİLİMİ KORUMASI: Tarih formatımız YYYY-MM-DD olduğu için 
+            // JavaScript Date objesine hiç bulaşmadan direkt metin büyüklük kontrolü yapıyoruz.
+            const filteredData = allData.filter(row => {
+                const rawDate = row['DepoId#Tarih'].split('#')[1]; // Örn: "2026-06-25"
+                return rawDate >= startDateStr && rawDate <= endDateStr;
+            });
+
+            // Yeniden eskiye sıralama (Yine Date objesine bulaşmadan)
+            filteredData.sort((a, b) => {
+                const dateA = a['DepoId#Tarih'].split('#')[1];
+                const dateB = b['DepoId#Tarih'].split('#')[1];
+                return dateB.localeCompare(dateA); 
+            });
+
+            renderReportTable(filteredData, "Ozel");
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById('reportLoading').innerHTML = `<span style="color:#ef4444;">Hata: Raporlar çekilemedi!</span>`;
+        }
+    }
+    // Excel Dosyası Oluşturucu
+    function exportToCSV(dataList, fileName) {
+        const headers = ["İstasyon ID", "Depo Adı", "Tarih", "Günlük Tüketim (%)", "Günlük Tüketim (m³)", "Dolum Sayısı", "Dolum Özeti (Saatli)"];
+        
+        const csvRows = dataList.map(row => {
+            const rawDepoTarih = row["DepoId#Tarih"] || "Bilinmeyen#Tarih";
+            const [depoId, tarih] = rawDepoTarih.split("#");
+            
+            let dolumAciklama = "İkmal Yapılmadı";
+            if (row.DolumSayisi > 0 && row.DolumDetaylari && row.DolumDetaylari.length > 0) {
+                dolumAciklama = row.DolumDetaylari.map(d => {
+                    let saatMetni = "";
+                    if (d.Saat && !isNaN(d.Saat)) {
+                        saatMetni = new Date(parseInt(d.Saat)).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                    }
+                    return saatMetni ? `Saat ${saatMetni} -> %${d.Baslangic}'ten %${d.Bitis}'e` : `%${d.Baslangic} -> %${d.Bitis}`;
+                }).join(" | "); 
+            }
+            
+            return [
+                `"${row.CihazSeriNo}"`, `"${depoId}"`, `"${tarih}"`,
+                `"%${row.GunlukTuketimYuzde || 0}"`, `"${row.GunlukTuketimM3 || '0'}"`,
+                `"${row.DolumSayisi || 0}"`, `"${dolumAciklama}"`
+            ].join(";"); 
+        });
+
+        const csvString = "\uFEFF" + headers.join(";") + "\n" + csvRows.join("\n");
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${fileName}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // =========================================================
+    // 5. BAŞLANGIÇ İŞLEMLERİ
+    // =========================================================
+    flatpickr("#dateRangePicker", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        locale: "tr",
+        maxDate: "today" 
+    });
+
+    loadDeviceData();
+
+    </script>
+</body>
+</html>

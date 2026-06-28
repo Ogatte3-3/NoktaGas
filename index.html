@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoktaGAZ - IoT Giriş Paneli</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-aside">
+            <span class="eyebrow">NoktaGAZ B2B SaaS</span>
+            <h1>Endüstriyel LPG tanklarınız için canlı seviye kontrolü.</h1>
+            <p>AWS IoT altyapısından gelen saha verilerini tek, güvenli ve operasyon odaklı panelde takip edin.</p>
+            <div class="login-metrics">
+                <span>Anlık doluluk</span>
+                <span>Kritik eşik uyarısı</span>
+                <span>Raporlama</span>
+            </div>
+        </div>
+        <div class="login-container">
+            <div class="brand-area">
+                <img src="logo@2x.png" alt="NoktaGAZ Logo" class="brand-logo">
+                <p>LPG Ölçüm ve Otomasyon Sistemleri</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="username">Kullanıcı Adı</label>
+                    <input type="text" id="username" required placeholder="Kullanıcı adınızı giriniz">
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Şifre</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                
+                <button type="submit" class="btn-primary">Sisteme Giriş Yap</button>
+            </form>
+            
+            <div id="loginError" class="error-message"></div>
+        </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
