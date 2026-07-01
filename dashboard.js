@@ -65,6 +65,8 @@ async function fetchDevices(idToken, username) {
             const tanks = groupedDevices[cihazSeriNo];
             let tanksHTML = "";
             const deviceCriticalLevel = tanks.find(tank => tank.KritikSeviye)?.KritikSeviye || 20;
+            // Veritabanında özel isim varsa onu al, yoksa standart seri numarasını yaz
+            const istasyonAdi = tanks[0].IstasyonAdi ? tanks[0].IstasyonAdi : `İstasyon: ${cihazSeriNo}`;
 
             // O cihaza ait depoları (barları) oluştur
             tanks.forEach(tank => {
@@ -126,7 +128,7 @@ async function fetchDevices(idToken, username) {
                     <div class="critical-level-chip">Kritik eşik: %${deviceCriticalLevel}</div>
                     <div class="card-header-area">
                         <div>
-                            <div class="device-name">İstasyon: ${cihazSeriNo}</div>
+                            <div class="device-name">${istasyonAdi}</div>
                             <div class="device-id">Bağlı Depo Sayısı: ${tanks.length}</div>
                         </div>
                         <span class="card-open-indicator">➔</span>
