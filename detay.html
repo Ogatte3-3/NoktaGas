@@ -245,6 +245,40 @@
             text-transform: uppercase;
         }
 
+        .tank-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            width: 100%;
+            margin-top: 14px;
+        }
+
+        .tank-meta-item {
+            padding: 8px 9px;
+            background: rgba(15, 20, 24, 0.46);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .tank-meta-label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .tank-meta-value {
+            display: block;
+            margin-top: 3px;
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
         .tank-last-fill {
             margin-top: 14px;
             padding: 10px 12px;
@@ -623,6 +657,10 @@
             .tank-info { margin-top: 10px; }
             .tank-info h3 { font-size: 25px; }
             .tank-info p { margin-top: 5px; font-size: 9px; letter-spacing: 0.04em; }
+            .tank-meta-grid { gap: 5px; margin-top: 8px; }
+            .tank-meta-item { padding: 5px; }
+            .tank-meta-label { font-size: 8px; }
+            .tank-meta-value { font-size: 10px; }
             .tank-last-fill {
                 margin-top: 8px;
                 padding: 6px;
@@ -834,6 +872,8 @@
             }
 
             const kritikLimit = tank.KritikSeviye ? parseFloat(tank.KritikSeviye) : 20;
+            const hacimDegeri = tank.DepoHacmi || tank.Hacim || tank.TankHacmi || tank.DepoHacmiLitre;
+            const hacimMetni = hacimDegeri ? `${hacimDegeri} L` : "Veri yok";
 
             let bgGradient = "linear-gradient(to right, #22c55e, #16a34a)"; 
             if (level <= kritikLimit) {
@@ -852,6 +892,16 @@
                     <div class="tank-info">
                         <h3>%${level}</h3>
                         <p>Mevcut Doluluk</p>
+                        <div class="tank-meta-grid">
+                            <div class="tank-meta-item">
+                                <span class="tank-meta-label">Kritik Seviye</span>
+                                <span class="tank-meta-value">%${kritikLimit}</span>
+                            </div>
+                            <div class="tank-meta-item">
+                                <span class="tank-meta-label">Hacim</span>
+                                <span class="tank-meta-value">${hacimMetni}</span>
+                            </div>
+                        </div>
                         <div class="tank-last-fill">Son Veri:<br>${sonGuncelleme}</div>
                     </div>
                 </div>

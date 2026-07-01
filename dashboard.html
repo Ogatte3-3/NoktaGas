@@ -23,14 +23,21 @@
     <main class="dashboard-container">
         <div class="page-header">
             <span class="eyebrow">NoktaGAZ Operasyon Paneli</span>
-            <h2>Sisteminizdeki Cihazlar</h2>
-            <p>Yetkili olduğunuz tüm LPG depolama tanklarının anlık doluluk oranları ve kritik eşik seviyeleri aşağıda listelenmiştir.</p>
+            <div class="page-header-row">
+                <div>
+                    <h2>Sisteminizdeki Cihazlar</h2>
+                    <p>Yetkili olduğunuz tüm LPG depolama tanklarının anlık doluluk oranları ve kritik eşik seviyeleri aşağıda listelenmiştir.</p>
+                </div>
+                <button id="refreshPageBtn" class="btn-refresh" type="button">Yenile</button>
+            </div>
         </div>
 
         <div id="deviceGrid" class="device-grid">
             <div class="loading-state">Cihaz verileri AWS üzerinden yükleniyor...</div>
         </div>
     </main>
+
+    <button id="scrollTopBtn" class="scroll-top-btn" type="button" aria-label="Yukarı çık">↑</button>
 
     <script src="dashboard.js"></script>
 </body>

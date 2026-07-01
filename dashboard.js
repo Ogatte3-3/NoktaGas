@@ -22,6 +22,24 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    const refreshPageBtn = document.getElementById("refreshPageBtn");
+    if (refreshPageBtn) {
+        refreshPageBtn.addEventListener("click", () => {
+            window.location.reload();
+        });
+    }
+
+    const scrollTopBtn = document.getElementById("scrollTopBtn");
+    if (scrollTopBtn) {
+        window.addEventListener("scroll", () => {
+            scrollTopBtn.classList.toggle("is-visible", window.scrollY > 320);
+        });
+
+        scrollTopBtn.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
+
     fetchDevices(idToken, username);
 });
 

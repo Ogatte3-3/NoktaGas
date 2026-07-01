@@ -295,6 +295,67 @@ body {
     font-size: 15px;
 }
 
+.page-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.btn-refresh {
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding: 10px 15px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #f97316, #e65100);
+    border: 0;
+    border-radius: 8px;
+    box-shadow: 0 14px 30px rgba(249, 115, 22, 0.25);
+    cursor: pointer;
+    font-weight: 800;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.btn-refresh:hover {
+    background: linear-gradient(135deg, #e65100, #bf360c);
+    box-shadow: 0 18px 34px rgba(249, 115, 22, 0.32);
+    transform: translateY(-2px);
+}
+
+.scroll-top-btn {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 900;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #f97316, #e65100);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.38);
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: 800;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.scroll-top-btn.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.scroll-top-btn:hover {
+    box-shadow: 0 22px 44px rgba(249, 115, 22, 0.28);
+    transform: translateY(-2px);
+}
+
 /* Cihaz Kartları Izgarası (Grid) */
 .device-grid {
     display: grid;
@@ -508,6 +569,8 @@ body {
     .btn-logout { padding: 7px 11px; font-size: 12px; }
     .dashboard-container { margin-top: 24px; padding: 0 14px; }
     .page-header { padding: 16px; margin-bottom: 16px; }
+    .page-header-row { flex-direction: column; gap: 12px; }
+    .btn-refresh { width: 100%; }
     .page-header h2 { font-size: 25px; }
     .page-header p { font-size: 13px; }
     .device-grid { grid-template-columns: 1fr; }
@@ -518,4 +581,5 @@ body {
     .tank-section { margin-bottom: 14px; }
     .tank-info-text { font-size: 12px; }
     .progress-bar-bg { height: 12px; }
+    .scroll-top-btn { right: 14px; bottom: 14px; width: 40px; height: 40px; font-size: 20px; }
 }
