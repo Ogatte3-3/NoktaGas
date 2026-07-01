@@ -115,14 +115,19 @@ body {
 
 .brand-area {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 28px;
+    padding: 20px 18px 16px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(241, 245, 249, 0.96));
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    border-radius: 8px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 14px 28px rgba(0, 0, 0, 0.16);
 }
 
 /* Logo Tasarım Ayarları */
 .brand-logo {
-    max-width: 140px;
+    max-width: 155px;
     height: auto;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     display: inline-block;
 }
 
@@ -135,8 +140,9 @@ body {
 
 .brand-area p {
     font-size: 13px;
-    color: #cbd5e1;
+    color: #475569;
     margin-top: 5px;
+    font-weight: 700;
 }
 
 /* Form Elemanları */
@@ -444,24 +450,72 @@ body {
 @media (max-width: 900px) {
     .login-wrapper {
         grid-template-columns: 1fr;
-        padding: 30px 20px;
+        padding: 28px 18px;
+        align-items: start;
+        justify-items: center;
     }
 
-    .login-aside { max-width: 100%; }
+    .login-aside {
+        width: min(100%, 680px);
+        max-width: 100%;
+    }
+    .login-aside h1 { max-width: 680px; }
+
+    .login-container {
+        width: min(100%, 420px);
+        justify-self: center;
+    }
 
     .main-header {
         gap: 16px;
         padding: 16px 20px;
-        flex-direction: column;
-        align-items: flex-start;
+        flex-wrap: wrap;
     }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .welcome-text { margin-right: 0; }
+
+    .device-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
 }
 
 @media (max-width: 560px) {
-    .login-aside h1 { font-size: 34px; }
-    .login-container { padding: 28px 22px; }
+    .login-wrapper { gap: 22px; padding: 18px 16px; }
+    .login-aside { text-align: left; }
+    .login-aside h1 { font-size: 30px; }
+    .login-aside p { margin-top: 14px; font-size: 14px; }
+    .login-metrics { margin-top: 18px; gap: 7px; }
+    .login-metrics span { padding: 7px 9px; font-size: 11px; }
+    .login-container {
+        width: 100%;
+        max-width: 420px;
+        padding: 24px 18px;
+    }
+    .brand-area { margin-bottom: 22px; padding: 16px 14px 13px; }
+    .brand-logo { max-width: 138px; }
+    .main-header { padding: 12px 14px; }
+    .header-left { gap: 10px; }
+    .header-logo { max-height: 38px; }
+    .system-title { font-size: 12px; }
+    .header-right { gap: 8px; }
+    .welcome-text { font-size: 13px; }
+    .btn-logout { padding: 7px 11px; font-size: 12px; }
     .dashboard-container { margin-top: 24px; padding: 0 14px; }
+    .page-header { padding: 16px; margin-bottom: 16px; }
+    .page-header h2 { font-size: 25px; }
+    .page-header p { font-size: 13px; }
     .device-grid { grid-template-columns: 1fr; }
+    .device-card { padding: 20px 16px 16px; }
+    .card-header-area { margin: 24px 0 14px; }
     .device-name { padding-right: 0; margin-top: 16px; }
     .critical-level-chip { left: 20px; right: auto; }
+    .tank-section { margin-bottom: 14px; }
+    .tank-info-text { font-size: 12px; }
+    .progress-bar-bg { height: 12px; }
 }
