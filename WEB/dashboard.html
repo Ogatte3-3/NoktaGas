@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoktaGAZ - Kontrol Paneli</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+
+    <header class="main-header">
+        <div class="header-left">
+            <img src="logo@2x.png" alt="NoktaGAZ" class="header-logo">
+            <span class="system-title">| LPG Ölçüm Sistemi</span>
+        </div>
+        <div class="header-right">
+            <span id="welcomeMessage" class="welcome-text">Hoş geldiniz, ...</span>
+            <button id="logoutBtn" class="btn-logout">Çıkış Yap</button>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <div class="page-header">
+            <span class="eyebrow">NoktaGAZ Operasyon Paneli</span>
+            <div class="page-header-row">
+                <div>
+                    <h2>Sisteminizdeki Cihazlar</h2>
+                    <p>Yetkili olduğunuz tüm LPG depolama tanklarının anlık doluluk oranları ve kritik eşik seviyeleri aşağıda listelenmiştir.</p>
+                </div>
+                <button id="refreshPageBtn" class="btn-refresh" type="button">Yenile</button>
+            </div>
+        </div>
+
+        <div id="deviceGrid" class="device-grid">
+            <div class="loading-state">Cihaz verileri AWS üzerinden yükleniyor...</div>
+        </div>
+    </main>
+
+    <button id="scrollTopBtn" class="scroll-top-btn" type="button" aria-label="Yukarı çık">↑</button>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
