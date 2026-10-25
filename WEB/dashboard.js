@@ -132,19 +132,44 @@ function renderRegionNavigation() {
 
 function renderDeviceGrid() {
     const grid = document.getElementById("deviceGrid");
-    const visibleDevices = Object.entries(groupedDevices).filter(([, tanks]) => (
-        activeRegion === ALL_REGIONS || getDeviceRegion(tanks) === activeRegion
-    ));
+    const allDevices = Object.entries(groupedDevices);
 
-    if (visibleDevices.length === 0) {
-        const message = Object.keys(groupedDevices).length === 0
-            ? "Hesabınıza tanımlı yetkili bir tank bulunamadı."
-            : `${activeRegion} bölgesine atanmış cihaz bulunamadı.`;
-        grid.innerHTML = `<div class="loading-state">${escapeHtml(message)}</div>`;
+    if (allDevices.length === 0) {
+        grid.classList.remove("is-region-grouped");
+        grid.innerHTML = "<div class=\"loading-state\">Hesabınıza tanımlı yetkili bir tank bulunamadı.</div>";
         return;
     }
 
-    grid.innerHTML = visibleDevices.map(([deviceId, tanks]) => createDeviceCard(deviceId, tanks)).join("");
+    if (activeRegion === ALL_REGIONS) {
+        grid.classList.add("is-region-grouped");
+        grid.innerHTML = DEVICE_REGIONS.map(region => {
+            const regionDevices = allDevices.filter(([, tanks]) => getDeviceRegion(tanks) === region);
+            if (regionDevices.length === 0) return "";
+
+            return `
+                <section class="region-device-section" aria-labelledby="region-${DEVICE_REGIONS.indexOf(region)}">
+                    <div class="region-section-header">
+                        <h2 id="region-${DEVICE_REGIONS.indexOf(region)}">${escapeHtml(region)}</h2>
+                        <span>${regionDevices.length} cihaz</span>
+                    </div>
+                    <div class="region-device-grid">
+                        ${regionDevices.map(([deviceId, tanks]) => createDeviceCard(deviceId, tanks)).join("")}
+                    </div>
+                </section>
+            `;
+        }).join("");
+    } else {
+        const visibleDevices = allDevices.filter(([, tanks]) => getDeviceRegion(tanks) === activeRegion);
+        grid.classList.remove("is-region-grouped");
+
+        if (visibleDevices.length === 0) {
+            const message = `${activeRegion} bölgesine atanmış cihaz bulunamadı.`;
+            grid.innerHTML = `<div class="loading-state">${escapeHtml(message)}</div>`;
+            return;
+        }
+
+        grid.innerHTML = visibleDevices.map(([deviceId, tanks]) => createDeviceCard(deviceId, tanks)).join("");
+    }
 
     grid.querySelectorAll(".device-card").forEach(card => {
         const openDetails = () => {
@@ -168,6 +193,10 @@ function renderDeviceGrid() {
     });
 }
 
+/*
+ * Kart üretimi ayrı tutulur; hem tek bölge görünümü hem de "Tümü" içindeki
+ * bölge bölümleri aynı cihaz kartını kullanır.
+ */
 function createDeviceCard(deviceId, tanks) {
     const criticalSource = tanks.find(tank => tank.KritikSeviye);
     const deviceCriticalLevel = criticalSource ? Number(criticalSource.KritikSeviye) : 20;

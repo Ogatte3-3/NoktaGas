@@ -539,6 +539,55 @@ body {
     gap: 25px;
 }
 
+.device-grid.is-region-grouped { display: block; }
+
+.region-device-section + .region-device-section { margin-top: 38px; }
+
+.region-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding: 0 2px 12px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.region-section-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    color: #ffffff;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.region-section-header h2::before {
+    content: "";
+    width: 5px;
+    height: 24px;
+    background: linear-gradient(180deg, #fb923c, #e65100);
+    border-radius: 999px;
+    box-shadow: 0 0 16px rgba(249, 115, 22, 0.38);
+}
+
+.region-section-header span {
+    padding: 5px 9px;
+    color: #fed7aa;
+    background: rgba(249, 115, 22, 0.1);
+    border: 1px solid rgba(249, 115, 22, 0.22);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.region-device-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+}
+
 .loading-state {
     grid-column: 1 / -1;
     text-align: center;
@@ -740,7 +789,8 @@ body {
     .welcome-text { margin-right: 0; }
 
     .region-filter-buttons { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .device-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    .device-grid,
+    .region-device-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
 }
 
 @media (max-width: 560px) {
@@ -772,7 +822,10 @@ body {
     .page-header p { font-size: 13px; }
     .region-filter { margin-bottom: 16px; padding: 14px; }
     .region-filter-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .device-grid { grid-template-columns: 1fr; }
+    .device-grid,
+    .region-device-grid { grid-template-columns: 1fr; }
+    .region-device-section + .region-device-section { margin-top: 28px; }
+    .region-section-header h2 { font-size: 18px; }
     .device-card { padding: 20px 16px 16px; }
     .card-header-area { margin: 24px 0 14px; }
     .device-name { padding-right: 0; margin-top: 16px; }
