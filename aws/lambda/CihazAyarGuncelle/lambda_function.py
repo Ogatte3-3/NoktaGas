@@ -14,6 +14,8 @@ ALLOWED_REGIONS = {
     "Karadeniz",
     "Doğu Anadolu",
     "Güneydoğu Anadolu",
+    "Dökme Gaz",
+    "Dolum Tesisleri",
     "Diğer / Atanmamış",
 }
 
