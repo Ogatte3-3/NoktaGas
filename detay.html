@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
-    
+
     <style>
 
         :root {
@@ -77,6 +77,20 @@
         #cihazSeriNoSpan {
             color: var(--text-soft);
             font-family: Consolas, 'Courier New', monospace;
+        }
+
+        .device-region-badge {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 8px;
+            padding: 4px 9px;
+            color: #bae6fd;
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.24);
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+            vertical-align: middle;
         }
 
         .detail-grid {
@@ -353,7 +367,8 @@
         }
 
         .date-input,
-        .modal-body input {
+        .modal-body input,
+        .modal-body select {
             width: 100%;
             min-height: 46px;
             padding: 12px 14px;
@@ -367,10 +382,12 @@
         }
 
         .date-input:hover,
-        .modal-body input:hover { border-color: rgba(249, 115, 22, 0.45); }
+        .modal-body input:hover,
+        .modal-body select:hover { border-color: rgba(249, 115, 22, 0.45); }
 
         .date-input:focus,
-        .modal-body input:focus {
+        .modal-body input:focus,
+        .modal-body select:focus {
             background: rgba(15, 20, 24, 0.98) !important;
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.16);
@@ -710,7 +727,21 @@
                     <label>İstasyon Adı / Etiketi</label>
                     <input type="text" id="editDeviceName" placeholder="Örn: Fabrika Ana İstasyon">
                 </div>
-                
+
+                <div class="input-group">
+                    <label for="editRegion">Bölge</label>
+                    <select id="editRegion">
+                        <option value="Marmara">Marmara</option>
+                        <option value="Ege">Ege</option>
+                        <option value="Akdeniz">Akdeniz</option>
+                        <option value="İç Anadolu">İç Anadolu</option>
+                        <option value="Karadeniz">Karadeniz</option>
+                        <option value="Doğu Anadolu">Doğu Anadolu</option>
+                        <option value="Güneydoğu Anadolu">Güneydoğu Anadolu</option>
+                        <option value="Diğer / Atanmamış">Diğer / Atanmamış</option>
+                    </select>
+                </div>
+
                 <div class="modal-field-grid">
                     <div class="input-group">
                         <label>Depo 1 Hacmi (L)</label>
@@ -736,7 +767,7 @@
     <div class="detail-header">
         <div>
             <h2 id="pageTitle">İstasyon Detayı Yükleniyor...</h2>
-            <p>Cihaz kimliği: <span id="cihazSeriNoSpan">---</span></p>
+            <p>Cihaz kimliği: <span id="cihazSeriNoSpan">---</span><span id="deviceRegionBadge" class="device-region-badge">Diğer / Atanmamış</span></p>
         </div>
         <button class="btn-edit" onclick="openModal()">⚙️ Cihaz Ayarları</button>
     </div>
@@ -773,7 +804,7 @@
             </div>
             <div class="modal-body">
                 <div id="reportLoading">Veriler AWS'den çekiliyor, lütfen bekleyin...</div>
-                
+
                 <div class="report-table-shell">
                     <table class="report-table" id="reportTable" style="display:none;">
                         <thead>
@@ -796,14 +827,23 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
-    
+
     <script>
-        
+
 // =========================================================
     // 1. GLOBAL DEĞİŞKENLER VE API ADRESLERİ
     // =========================================================
     const API_GATEWAY_URL = "https://3hv82jpo9j.execute-api.eu-north-1.amazonaws.com/prod/cihazlar";
     const RAPOR_API_URL = "https://3hv82jpo9j.execute-api.eu-north-1.amazonaws.com/prod/raporlar";
+
+    const DEVICE_REGIONS = [
+        "Marmara", "Ege", "Akdeniz", "İç Anadolu", "Karadeniz",
+        "Doğu Anadolu", "Güneydoğu Anadolu", "Diğer / Atanmamış"
+    ];
+
+    function normalizeRegion(region) {
+        return DEVICE_REGIONS.includes(region) ? region : "Diğer / Atanmamış";
+    }
 
     const urlParams = new URLSearchParams(window.location.search);
     const cihazId = urlParams.get('cihaz') || "Bilinmeyen Cihaz";
@@ -844,6 +884,9 @@
                 document.getElementById('pageTitle').innerText = `İstasyon: ${cihazId}`;
             }
 
+            const regionSource = deviceTanks.find(tank => tank.Bolge);
+            document.getElementById('deviceRegionBadge').innerText = normalizeRegion(regionSource?.Bolge);
+
             renderRealTanks(deviceTanks);
 
         } catch (err) {
@@ -854,7 +897,7 @@
 
     function renderRealTanks(tanks) {
         const container = document.getElementById('tanksContainer');
-        container.innerHTML = ""; 
+        container.innerHTML = "";
 
         if (tanks.length === 0) {
             container.innerHTML = "<div style='color: #94a3b8;'>Bu cihaza ait depo verisi bulunamadı.</div>";
@@ -864,7 +907,7 @@
         tanks.forEach(tank => {
             const level = parseFloat(tank.SonDolulukOrani || 0);
             const tankName = tank.DepoId === 'depo1' ? 'Depo 1' : 'Depo 2';
-            
+
             let sonGuncelleme = "Bilinmiyor";
             if (tank.SonGuncelleme) {
                 const dateObj = new Date(tank.SonGuncelleme);
@@ -875,11 +918,11 @@
             const hacimDegeri = tank.DepoHacmi || tank.Hacim || tank.TankHacmi || tank.DepoHacmiLitre;
             const hacimMetni = hacimDegeri ? `${hacimDegeri} L` : "Veri yok";
 
-            let bgGradient = "linear-gradient(to right, #22c55e, #16a34a)"; 
+            let bgGradient = "linear-gradient(to right, #22c55e, #16a34a)";
             if (level <= kritikLimit) {
-                bgGradient = "linear-gradient(to right, #ef4444, #b91c1c)"; 
+                bgGradient = "linear-gradient(to right, #ef4444, #b91c1c)";
             } else if (level <= kritikLimit + 20) {
-                bgGradient = "linear-gradient(to right, #eab308, #a16207)"; 
+                bgGradient = "linear-gradient(to right, #eab308, #a16207)";
             }
 
             container.innerHTML += `
@@ -924,11 +967,12 @@
         document.getElementById('editTank1Capacity').value = (depo1Data && depo1Data.DepoHacmi) ? depo1Data.DepoHacmi : "5000";
         document.getElementById('editTank2Capacity').value = (depo2Data && depo2Data.DepoHacmi) ? depo2Data.DepoHacmi : "5000";
         document.getElementById('editCriticalLevel').value = (depo1Data && depo1Data.KritikSeviye) ? depo1Data.KritikSeviye : "20";
-        modal.style.display = "flex"; 
+        document.getElementById('editRegion').value = normalizeRegion(depo1Data?.Bolge || depo2Data?.Bolge);
+        modal.style.display = "flex";
     }
 
     function closeModal() {
-        document.getElementById('settingsModal').style.display = "none"; 
+        document.getElementById('settingsModal').style.display = "none";
     }
 
     async function saveSettings() {
@@ -936,36 +980,53 @@
         const tank1Cap = document.getElementById('editTank1Capacity').value;
         const tank2Cap = document.getElementById('editTank2Capacity').value;
         const newCritical = document.getElementById('editCriticalLevel').value;
-        const idToken = localStorage.getItem('idToken'); 
+        const newRegion = document.getElementById('editRegion').value;
+        const idToken = localStorage.getItem('idToken');
+
+        if (!newName.trim()) {
+            alert("İstasyon adı boş bırakılamaz.");
+            return;
+        }
+
+        if (!DEVICE_REGIONS.includes(newRegion)) {
+            alert("Lütfen geçerli bir bölge seçin.");
+            return;
+        }
 
         const updateData = {
-            cihazId: cihazId, 
+            cihazId: cihazId,
             istasyonAdi: newName,
             depo1Hacim: tank1Cap,
             depo2Hacim: tank2Cap,
-            kritikSeviye: newCritical
+            kritikSeviye: newCritical,
+            bolge: newRegion
         };
 
+        const saveBtn = document.querySelector('#settingsModal .btn-save');
+
         try {
-            const saveBtn = document.querySelector('#settingsModal .btn-save');
             saveBtn.innerText = "Kaydediliyor...";
             saveBtn.disabled = true;
 
             const response = await fetch(API_GATEWAY_URL, {
                 method: 'POST',
                 headers: { 'Authorization': idToken, 'Content-Type': 'application/json' },
-                body: JSON.stringify(updateData) 
+                body: JSON.stringify(updateData)
             });
 
-            if (!response.ok) throw new Error(`Sunucu Hatası: ${response.status}`);
+            const responseData = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(responseData.error || `Sunucu Hatası: ${response.status}`);
 
             alert(`${newName} ayarları başarıyla kaydedildi!`);
             closeModal();
-            location.reload(); 
+            location.reload();
 
         } catch (err) {
             console.error("Hata:", err);
             alert("Kaydetme işlemi başarısız oldu. Detay: " + err.message);
+        } finally {
+            saveBtn.innerText = "Değişiklikleri Kaydet";
+            saveBtn.disabled = false;
         }
     }
 
@@ -998,7 +1059,7 @@
             const [depoId, tarih] = row["DepoId#Tarih"].split("#");
             const tuketim = row.GunlukTuketimYuzde || 0;
             const dolumSayisi = row.DolumSayisi || 0;
-            
+
             let islemDetayi = `<span style="color:#94a3b8;">Normal</span>`;
             if (dolumSayisi > 0) {
                 islemDetayi = `<span class="badge">${dolumSayisi} Kez İkmal Yapıldı</span>`;
@@ -1017,7 +1078,7 @@
 
         document.getElementById('reportLoading').style.display = "none";
         document.getElementById('reportTable').style.display = "table";
-        
+
         const downloadBtn = document.getElementById('btnRealDownload');
         downloadBtn.style.display = "block";
         downloadBtn.onclick = () => exportToCSV(filteredData, `NoktaGAZ_${cihazId}_${baslik}_Rapor`);
@@ -1106,11 +1167,11 @@
             if (dateArray.length === 1) {
                 dateArray = tarihler.split(" to "); // İngilizce kalırsa diye yedek plan
             }
-            
+
             const startDateStr = dateArray[0].trim();
             const endDateStr = (dateArray[1] ? dateArray[1] : dateArray[0]).trim();
 
-            // SAAT DİLİMİ KORUMASI: Tarih formatımız YYYY-MM-DD olduğu için 
+            // SAAT DİLİMİ KORUMASI: Tarih formatımız YYYY-MM-DD olduğu için
             // JavaScript Date objesine hiç bulaşmadan direkt metin büyüklük kontrolü yapıyoruz.
             const filteredData = allData.filter(row => {
                 const rawDate = row['DepoId#Tarih'].split('#')[1]; // Örn: "2026-06-25"
@@ -1121,7 +1182,7 @@
             filteredData.sort((a, b) => {
                 const dateA = a['DepoId#Tarih'].split('#')[1];
                 const dateB = b['DepoId#Tarih'].split('#')[1];
-                return dateB.localeCompare(dateA); 
+                return dateB.localeCompare(dateA);
             });
 
             renderReportTable(filteredData, "Ozel");
@@ -1134,11 +1195,11 @@
     // Excel Dosyası Oluşturucu
     function exportToCSV(dataList, fileName) {
         const headers = ["İstasyon ID", "Depo Adı", "Tarih", "Günlük Tüketim (%)", "Günlük Tüketim (m³)", "Dolum Sayısı", "Dolum Özeti (Saatli)"];
-        
+
         const csvRows = dataList.map(row => {
             const rawDepoTarih = row["DepoId#Tarih"] || "Bilinmeyen#Tarih";
             const [depoId, tarih] = rawDepoTarih.split("#");
-            
+
             let dolumAciklama = "İkmal Yapılmadı";
             if (row.DolumSayisi > 0 && row.DolumDetaylari && row.DolumDetaylari.length > 0) {
                 dolumAciklama = row.DolumDetaylari.map(d => {
@@ -1147,14 +1208,14 @@
                         saatMetni = new Date(parseInt(d.Saat)).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
                     }
                     return saatMetni ? `Saat ${saatMetni} -> %${d.Baslangic}'ten %${d.Bitis}'e` : `%${d.Baslangic} -> %${d.Bitis}`;
-                }).join(" | "); 
+                }).join(" | ");
             }
-            
+
             return [
                 `"${row.CihazSeriNo}"`, `"${depoId}"`, `"${tarih}"`,
                 `"%${row.GunlukTuketimYuzde || 0}"`, `"${row.GunlukTuketimM3 || '0'}"`,
                 `"${row.DolumSayisi || 0}"`, `"${dolumAciklama}"`
-            ].join(";"); 
+            ].join(";");
         });
 
         const csvString = "\uFEFF" + headers.join(";") + "\n" + csvRows.join("\n");
@@ -1174,7 +1235,7 @@
         mode: "range",
         dateFormat: "Y-m-d",
         locale: "tr",
-        maxDate: "today" 
+        maxDate: "today"
     });
 
     loadDeviceData();
