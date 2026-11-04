@@ -1,0 +1,16 @@
+{
+  "StageName": "$default",
+  "AutoDeploy": true,
+  "DefaultRouteSettings": {
+    "ThrottlingBurstLimit": 10,
+    "ThrottlingRateLimit": 5
+  },
+  "AccessLogSettings": {
+    "DestinationArn": "arn:aws:logs:eu-north-1:692859916285:log-group:/aws/apigateway/NoktaGazExternalApi",
+    "Format": "{\"requestId\":\"$context.requestId\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"routeKey\":\"$context.routeKey\",\"status\":\"$context.status\",\"responseLength\":\"$context.responseLength\",\"integrationError\":\"$context.integrationErrorMessage\"}"
+  },
+  "Tags": {
+    "Project": "NoktaGaz",
+    "Purpose": "ExternalApi"
+  }
+}
