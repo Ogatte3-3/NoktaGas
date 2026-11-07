@@ -27,9 +27,11 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 
     cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: function (result) {
+            const authenticatedUsername = result.getAccessToken().payload.username;
+
             localStorage.setItem('accessToken', result.getAccessToken().getJwtToken());
             localStorage.setItem('idToken', result.getIdToken().getJwtToken());
-            localStorage.setItem('username', usernameInput);
+            localStorage.setItem('username', authenticatedUsername || usernameInput.trim().toLowerCase());
             window.location.href = "dashboard.html";
         },
         onFailure: function(err) {
