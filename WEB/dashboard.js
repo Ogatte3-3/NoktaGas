@@ -224,14 +224,21 @@ function createDeviceCard(deviceId, tanks) {
     const deviceCriticalLevel = criticalSource ? Number(criticalSource.KritikSeviye) : 20;
     const stationName = tanks[0].IstasyonAdi || `İstasyon: ${deviceId}`;
     const region = getDeviceRegion(tanks);
+    const deviceLastCommunicationValue = tanks.reduce((latest, tank) => {
+        const value = tank.SonIletisim || tank.SonGuncelleme;
+        if (!value) return latest;
+
+        const valueTime = Date.parse(value);
+        const latestTime = Date.parse(latest);
+        return !latest || !Number.isFinite(latestTime) || valueTime > latestTime ? value : latest;
+    }, "");
+    const deviceLastCommunication = formatTurkeyDateTime(deviceLastCommunicationValue);
 
     let tanksHtml = tanks.map(tank => {
         const rawLevel = Number.parseFloat(tank.SonDolulukOrani || 0);
         const level = Number.isFinite(rawLevel) ? Math.min(100, Math.max(0, rawLevel)) : 0;
         const tankName = tank.DepoId || "Tanımsız Depo";
-        const lastCommunicationValue = tank.SonIletisim || tank.SonGuncelleme;
         const lastLevelChangeValue = tank.SonSeviyeDegisimi || tank.SonGuncelleme;
-        const lastCommunication = formatTurkeyDateTime(lastCommunicationValue);
         const lastLevelChange = formatTurkeyDateTime(lastLevelChangeValue);
         const criticalLevel = tank.KritikSeviye ? Number(tank.KritikSeviye) : deviceCriticalLevel;
         const isInactive = level === 0;
@@ -256,10 +263,6 @@ function createDeviceCard(deviceId, tanks) {
                     <div class="progress-bar-fill ${backgroundClass}" style="width: ${level}%;"></div>
                 </div>
                 <div class="tank-last-update">
-                    <span>Son İletişim:</span>
-                    <time datetime="${escapeHtml(lastCommunicationValue || "")}" title="Türkiye saati">${escapeHtml(lastCommunication)}</time>
-                </div>
-                <div class="tank-last-update">
                     <span>Son Seviye Değişimi:</span>
                     <time datetime="${escapeHtml(lastLevelChangeValue || "")}" title="Türkiye saati">${escapeHtml(lastLevelChange)}</time>
                 </div>
@@ -275,10 +278,6 @@ function createDeviceCard(deviceId, tanks) {
                     <span class="status-badge status-warning">PASİF</span>
                 </div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill bg-warning" style="width: 0%;"></div></div>
-                <div class="tank-last-update">
-                    <span>Son İletişim:</span>
-                    <time title="Türkiye saati">Bilinmiyor</time>
-                </div>
                 <div class="tank-last-update">
                     <span>Son Seviye Değişimi:</span>
                     <time title="Türkiye saati">Bilinmiyor</time>
@@ -300,6 +299,10 @@ function createDeviceCard(deviceId, tanks) {
                 <span class="card-open-indicator" aria-hidden="true">➔</span>
             </div>
             ${tanksHtml}
+            <div class="card-footer-area">
+                <span>Son İletişim</span>
+                <time datetime="${escapeHtml(deviceLastCommunicationValue)}" title="Türkiye saati">${escapeHtml(deviceLastCommunication)}</time>
+            </div>
         </article>
     `;
 }
