@@ -229,7 +229,10 @@ function createDeviceCard(deviceId, tanks) {
         const rawLevel = Number.parseFloat(tank.SonDolulukOrani || 0);
         const level = Number.isFinite(rawLevel) ? Math.min(100, Math.max(0, rawLevel)) : 0;
         const tankName = tank.DepoId || "Tanımsız Depo";
-        const lastUpdate = formatTurkeyDateTime(tank.SonGuncelleme);
+        const lastCommunicationValue = tank.SonIletisim || tank.SonGuncelleme;
+        const lastLevelChangeValue = tank.SonSeviyeDegisimi || tank.SonGuncelleme;
+        const lastCommunication = formatTurkeyDateTime(lastCommunicationValue);
+        const lastLevelChange = formatTurkeyDateTime(lastLevelChangeValue);
         const criticalLevel = tank.KritikSeviye ? Number(tank.KritikSeviye) : deviceCriticalLevel;
         const isInactive = level === 0;
         let statusClass = "status-normal";
@@ -253,8 +256,12 @@ function createDeviceCard(deviceId, tanks) {
                     <div class="progress-bar-fill ${backgroundClass}" style="width: ${level}%;"></div>
                 </div>
                 <div class="tank-last-update">
-                    <span>Son Veri:</span>
-                    <time datetime="${escapeHtml(tank.SonGuncelleme || "")}" title="Türkiye saati">${escapeHtml(lastUpdate)}</time>
+                    <span>Son İletişim:</span>
+                    <time datetime="${escapeHtml(lastCommunicationValue || "")}" title="Türkiye saati">${escapeHtml(lastCommunication)}</time>
+                </div>
+                <div class="tank-last-update">
+                    <span>Son Seviye Değişimi:</span>
+                    <time datetime="${escapeHtml(lastLevelChangeValue || "")}" title="Türkiye saati">${escapeHtml(lastLevelChange)}</time>
                 </div>
             </div>
         `;
@@ -269,7 +276,11 @@ function createDeviceCard(deviceId, tanks) {
                 </div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill bg-warning" style="width: 0%;"></div></div>
                 <div class="tank-last-update">
-                    <span>Son Veri:</span>
+                    <span>Son İletişim:</span>
+                    <time title="Türkiye saati">Bilinmiyor</time>
+                </div>
+                <div class="tank-last-update">
+                    <span>Son Seviye Değişimi:</span>
                     <time title="Türkiye saati">Bilinmiyor</time>
                 </div>
             </div>

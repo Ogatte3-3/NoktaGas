@@ -305,6 +305,12 @@
             line-height: 1.45;
         }
 
+        .tank-last-fill > div + div {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(249, 115, 22, 0.18);
+        }
+
         .report-section { padding: 26px; }
 
         .report-section h3 {
@@ -931,7 +937,8 @@
             const level = parseFloat(tank.SonDolulukOrani || 0);
             const tankName = tank.DepoId === 'depo1' ? 'Depo 1' : 'Depo 2';
 
-            const sonGuncelleme = formatTurkeyDateTime(tank.SonGuncelleme);
+            const sonIletisim = formatTurkeyDateTime(tank.SonIletisim || tank.SonGuncelleme);
+            const sonSeviyeDegisimi = formatTurkeyDateTime(tank.SonSeviyeDegisimi || tank.SonGuncelleme);
 
             const kritikLimit = tank.KritikSeviye ? parseFloat(tank.KritikSeviye) : 20;
             const hacimDegeri = tank.DepoHacmi || tank.Hacim || tank.TankHacmi || tank.DepoHacmiLitre;
@@ -964,7 +971,10 @@
                                 <span class="tank-meta-value">${hacimMetni}</span>
                             </div>
                         </div>
-                        <div class="tank-last-fill">Son Veri:<br>${sonGuncelleme}</div>
+                        <div class="tank-last-fill">
+                            <div>Son İletişim:<br>${sonIletisim}</div>
+                            <div>Son Seviye Değişimi:<br>${sonSeviyeDegisimi}</div>
+                        </div>
                     </div>
                 </div>
             `;

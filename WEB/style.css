@@ -758,7 +758,7 @@ body {
 .tank-last-update span {
     color: #fdba74;
     font-weight: 800;
-    white-space: nowrap;
+    max-width: 55%;
 }
 
 .tank-last-update time {
