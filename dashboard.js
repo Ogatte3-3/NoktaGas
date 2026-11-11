@@ -73,6 +73,26 @@ function escapeHtml(value) {
     })[character]);
 }
 
+const TURKEY_DATE_TIME_FORMATTER = new Intl.DateTimeFormat("tr-TR", {
+    timeZone: "Europe/Istanbul",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+});
+
+function formatTurkeyDateTime(value) {
+    if (!value) return "Bilinmiyor";
+
+    const date = new Date(value);
+    return Number.isNaN(date.getTime())
+        ? "Bilinmiyor"
+        : TURKEY_DATE_TIME_FORMATTER.format(date);
+}
+
 async function fetchDevices(idToken, username) {
     const grid = document.getElementById("deviceGrid");
     grid.innerHTML = "<div class='loading-state'>Veriler yükleniyor...</div>";
@@ -209,6 +229,7 @@ function createDeviceCard(deviceId, tanks) {
         const rawLevel = Number.parseFloat(tank.SonDolulukOrani || 0);
         const level = Number.isFinite(rawLevel) ? Math.min(100, Math.max(0, rawLevel)) : 0;
         const tankName = tank.DepoId || "Tanımsız Depo";
+        const lastUpdate = formatTurkeyDateTime(tank.SonGuncelleme);
         const criticalLevel = tank.KritikSeviye ? Number(tank.KritikSeviye) : deviceCriticalLevel;
         const isInactive = level === 0;
         let statusClass = "status-normal";
@@ -231,6 +252,10 @@ function createDeviceCard(deviceId, tanks) {
                 <div class="progress-bar-bg">
                     <div class="progress-bar-fill ${backgroundClass}" style="width: ${level}%;"></div>
                 </div>
+                <div class="tank-last-update">
+                    <span>Son Veri:</span>
+                    <time datetime="${escapeHtml(tank.SonGuncelleme || "")}" title="Türkiye saati">${escapeHtml(lastUpdate)}</time>
+                </div>
             </div>
         `;
     }).join("");
@@ -243,6 +268,10 @@ function createDeviceCard(deviceId, tanks) {
                     <span class="status-badge status-warning">PASİF</span>
                 </div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill bg-warning" style="width: 0%;"></div></div>
+                <div class="tank-last-update">
+                    <span>Son Veri:</span>
+                    <time title="Türkiye saati">Bilinmiyor</time>
+                </div>
             </div>
         `;
     }
